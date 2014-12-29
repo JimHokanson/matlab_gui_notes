@@ -1,0 +1,18 @@
+plotedit
+--------
+
+plotedit() can be used to enable editing of a plot. The first time I took interest in the function was when I was considering enabling a height resizing feature for multiple axes. The idea was to resize a single axes and to have a listener that subsequently resized the other axes to accomodate the change in size of the given axes
+
+?When was this feature first available?
+
+Mathworks Documentation: http://www.mathworks.com/help/matlab/ref/plotedit.html
+
+Lessons Learned
+---------------
+
+1. plotedit can be applied directly to axes
+
+plotedit(gca)
+
+2. plotedit(handle,'isactive') specifies the active state. Unfortunately this only seems to apply to the figure. Perhaps there is an alternative property which specifies which part of the figure is active.
+
