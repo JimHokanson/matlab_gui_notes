@@ -22,7 +22,8 @@ classdef uitable_wtf < handle
         function obj = uitable_wtf()
             obj.h_fig = uifigure();
             obj.h_table = uitable(obj.h_fig);
-            s = struct('a',num2cell(1:4),'b',num2cell(5:8));
+            n_rows = 1000;
+            s = struct('a',num2cell(1:n_rows),'b',num2cell(1:n_rows));
             obj.h_table.Data = struct2table(s);
             try
                 %Newer
@@ -33,12 +34,23 @@ classdef uitable_wtf < handle
             end
         end
         function rowSelected(obj,src,event)
-            try
-                fprintf('cell selected: [%d %d]\n',event.Selection(1),event.Selection(2))
-            catch
-                fprintf('cell selected: [%d %d]\n',event.Indices(1),event.Indices(2))
+            persistent count
+            
+            if isempty(count)
+                count = 1;
+            else
+                count = count + 1;
             end
-
+            
+            try
+                fprintf('%03d cell selected: [%d %d]\n',count,event.Selection(1),event.Selection(2))
+            catch
+                fprintf('%03d cell selected: [%d %d]\n',count,event.Indices(1),event.Indices(2))
+            end
+            
+            %Initial display of blue before disappearing
+            pause(0.3)
+            
             APPROACH = 2;
             switch APPROACH
                 case 1
@@ -51,12 +63,24 @@ classdef uitable_wtf < handle
                     
                     %obj.h_table.Visible = 'off';
                     try
-                    obj.h_table = copyobj(src,obj.h_fig,'legacy');
+                        obj.h_table = copyobj(src,obj.h_fig,'legacy');
                     catch
-                        obj.h_table = uitable(obj.h_fig,'Position',src.Position);
-                        obj.h_table.Data = src.Data;
+                        %THIS SCROLLS
+                        
+                        %TODO: Demo for tab as well ...
+                        %obj.h_table = uitable(obj.h_fig,'Visible','off');
+                        obj.h_table = uitable(obj.h_fig,'Visible','on','Data',src.Data);
+                        
+%                         obj.h_table.Visible = 'off';
+                        obj.h_table.Position = src.Position;
+                        %obj.h_table.Data = src.Data;
                         obj.h_table.CellSelectionCallback = @obj.rowSelected;
+%                         obj.h_table.Visible = 'on';
+                        drawnow nocallbacks
                     end
+                    pause(0.2);
+                    %src.Visible = 'off';
+                    %pause(3);
                     delete(src)
                     %obj.h_table.Visible = 'on';
                     %Not needed with 'legacy'
